@@ -1,6 +1,11 @@
-public struct Countdown {
-    public private(set) var text = "Hello, World!"
+import ArgumentParser
 
-    public init() {
-    }
+@main
+struct Countdown: AsyncParsableCommand {
+    static var configuration = CommandConfiguration(abstract: "A solver utility for the Countdown letters/numbers game",
+                                                    subcommands: [
+                                                        NumbersCommand.self,
+                                                        LettersCommand.self,
+                                                        ConondrumsCommand.self
+                                                    ])
 }
