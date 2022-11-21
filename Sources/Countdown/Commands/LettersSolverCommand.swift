@@ -1,7 +1,7 @@
 import ArgumentParser
 import Foundation
 
-struct LettersCommand: AsyncParsableCommand {
+struct LettersSolverCommand: AsyncParsableCommand {
     static var configuration = CommandConfiguration(commandName: "letters",
                                                     abstract: "Finds words from the given letters")
 
@@ -13,6 +13,9 @@ struct LettersCommand: AsyncParsableCommand {
 
     @Option(name: .long, help: "Maximum length")
     var max: Int?
+
+    @Option(name: .long, help: "Filter words that have definition")
+    var filterWordsWithDefinitions: Bool = true
 
     @Argument(help: "Letters")
     var letters: String
@@ -53,11 +56,21 @@ struct LettersCommand: AsyncParsableCommand {
                 break
             }
 
-            print("\(length) letter words")
+            var numberOfSolutions = 0
             let results = solutions[length] ?? []
             for solution in results {
-                let definition = (definitionFinder.define(solution)).map { ": \($0)" } ?? ""
-                print("- \(solution)\(definition)")
+                let definition = definitionFinder.define(solution)
+                if filterWordsWithDefinitions, definition == nil {
+                    continue
+                }
+
+                if numberOfSolutions == 0 {
+                    print("\(length) letter words")
+                }
+                numberOfSolutions += 1
+
+                let formattedDefinition = definition.map { ": \($0)" } ?? ""
+                print("- \(solution)\(formattedDefinition)")
             }
             displayedWords += results.count
         }

@@ -1,7 +1,7 @@
 import Foundation
 import ArgumentParser
 
-struct ConondrumsCommand: AsyncParsableCommand {
+struct ConondrumSolverCommand: AsyncParsableCommand {
     static var configuration = CommandConfiguration(commandName: "conondrums",
                                                     abstract: "Finds conondrums from the given letters")
 

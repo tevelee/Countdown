@@ -1,6 +1,6 @@
 import ArgumentParser
 
-struct NumbersCommand: AsyncParsableCommand {
+struct NumbersSolverCommand: AsyncParsableCommand {
     static var configuration = CommandConfiguration(commandName: "numbers",
                                                     abstract: "Tries to achieve the target number combining the given numbers with basic operations")
 

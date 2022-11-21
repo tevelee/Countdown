@@ -22,6 +22,8 @@ final class ConondrumSolver {
 
             let matches = self.words
                 .filter { $0.count == target.count && $0 != target }
+                .filter { $0.first!.isLowercase }
+                .filter { !$0.contains("-") }
                 .filter { $0.sorted() == target.sorted() }
 
             for try await match in matches {
