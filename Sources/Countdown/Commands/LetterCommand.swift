@@ -6,10 +6,18 @@ struct LettersCommand: AsyncParsableCommand {
                                                     abstract: "Finds words from the given letters")
 
     @Option(name: .shortAndLong, help: "Dictionary url")
-    var dictionary: String = "/usr/share/dict/words"
+    var dictionary: String = env["DICTIONARY"] ?? "/usr/share/dict/words"
+
+    @Option(name: .long, help: "Minimum length")
+    var min: Int = 4
+
+    @Option(name: .long, help: "Maximum length")
+    var max: Int?
 
     @Argument(help: "Letters")
     var letters: String
+
+    private static let env = ProcessInfo.processInfo.environment
 
     private var url: URL {
         get throws {
@@ -25,13 +33,15 @@ struct LettersCommand: AsyncParsableCommand {
     }
 
     mutating func run() async throws {
-        let solver = try await LetterSolver(letters: letters, dictionary: url)
+        let solver = try await LetterSolver(letters: letters, dictionary: url, min: min, max: max)
         var solutions: [Int: [String]] = [:]
         for try await result in solver.findWords() {
             solutions[result.count, default: []].append(result)
         }
         print()
         print("The best solutions are:")
+
+        let definitionFinder = WordDefinitionFinder()
 
         var displayedSections = 0
         var displayedWords = 0
@@ -46,7 +56,8 @@ struct LettersCommand: AsyncParsableCommand {
             print("\(length) letter words")
             let results = solutions[length] ?? []
             for solution in results {
-                print("- \(solution)")
+                let definition = (definitionFinder.define(solution)).map { ": \($0)" } ?? ""
+                print("- \(solution)\(definition)")
             }
             displayedWords += results.count
         }

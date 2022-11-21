@@ -1,6 +1,5 @@
 import XCTest
 @testable import Countdown
-import ArgumentParser
 
 final class LetterTests: XCTestCase {
     func testExample() async throws {

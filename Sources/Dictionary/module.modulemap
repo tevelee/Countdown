@@ -1,0 +1,4 @@
+module Dictionary {
+    header "Dictionary.h"
+    export *
+}
