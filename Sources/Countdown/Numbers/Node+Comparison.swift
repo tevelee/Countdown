@@ -30,13 +30,20 @@ extension Node {
         .subtraction: 2,
         .multiplication: 5,
         .division: 10
-    ]) -> Int {
+    ], depth: Int = 0) -> Int {
         switch self {
         case .number:
             return 0
-        case let .operation(operation, lhs, rhs, _):
-            let score = scores[operation] ?? 0
-            return lhs.complexity(scores: scores) + rhs.complexity(scores: scores) + score
+        case let .operation(operation, lhs, rhs, value):
+            var operationScore = scores[operation] ?? 0
+            if operation == .division {
+                operationScore = rhs.value == 2 ? 2 : rhs.value == 3 ? 4 : 10
+            }
+            let valueScore = value.isMultiple(of: 10) ? 0 : value.isMultiple(of: 2) ? 2 : value.isMultiple(of: 5) ? 8 : 10
+            let depthScore = depth
+            return operationScore + valueScore + depthScore
+                + lhs.complexity(scores: scores, depth: depth + 1)
+                + rhs.complexity(scores: scores, depth: depth + 1)
         }
     }
 }

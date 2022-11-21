@@ -9,7 +9,7 @@ final class LetterSolver {
     init(letters: String,
          dictionary url: URL,
          min: Int = 4,
-         max: Int?) async throws {
+         max: Int? = nil) async throws {
         self.letters = letters
         self.words = url.lines.eraseToAnyAsyncSequence()
         self.min = min
@@ -19,7 +19,7 @@ final class LetterSolver {
     init(letters: String,
          words: [String],
          min: Int = 4,
-         max: Int?) {
+         max: Int? = nil) {
         self.letters = letters
         self.words = words.async.eraseToAnyAsyncSequence()
         self.min = min

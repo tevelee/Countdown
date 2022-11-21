@@ -43,6 +43,15 @@ enum Node: Hashable {
     }
 
     func reduced() -> Node {
+        let reducedNode = _reduced()
+        if reducedNode == self {
+            return self
+        } else {
+            return reducedNode.reduced()
+        }
+    }
+
+    private func _reduced() -> Node {
         if case let .operation(operation, lhs, rhs, value) = self {
             if case let .operation(childOperation, childLhs, childRhs, _) = rhs,
                 operation.precedence == childOperation.precedence,
