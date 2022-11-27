@@ -18,10 +18,10 @@ final class NumbersTests: XCTestCase {
     }
 
     func testSteps() async throws {
-        let node: Node = try .subtract(.multiply(4, 5), .subtract(10, .add(1, .add(2, 3))))
+        let node: Node = try >4 * 5 - (10 - (1 + 2 + 3))
         XCTAssertEqual(node.steps().joined(separator: "\n"), """
-            4 * 5 = 20
-            20 - (10 - (1 + 2 + 3)) = 16
+            5 * 4 = 20
+            20 - 10 + 2 + 1 + 3 = 16
             """)
         XCTAssertEqual(node.description, "4 * 5 - (10 - (1 + 2 + 3))")
 
@@ -57,6 +57,12 @@ final class NumbersTests: XCTestCase {
         let node: Node = try .subtract(.subtract(.multiply(50, 9), .add(75, 7)), 6)
         XCTAssertEqual(node.description, "50 * 9 - (75 + 7) - 6")
         XCTAssertEqual(node.reduced().description, "50 * 9 - 75 - 7 - 6")
+    }
+
+    func testReduce2() throws {
+        let node: Node = try >20 - (10 - (1 + 2 + 3))
+        XCTAssertEqual(node.description, "20 - (10 - (1 + 2 + 3))")
+        XCTAssertEqual(node.reduced().description, "20 - 10 + 1 + 2 + 3")
     }
 
     func testSemanticallyEqualNodes_numbersOnly() throws {

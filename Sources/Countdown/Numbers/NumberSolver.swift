@@ -53,7 +53,7 @@ final class NumberSolver {
             return
         }
         if let node = availableNodes.first(where: { $0.value == target }) {
-            await result(node.reduced())
+            await result(node.reduced().ordered())
             // return // TODO: do we need to early return or let's wait for a less complex solution in the same tree?
         }
         for index1 in availableNodes.startIndex ..< availableNodes.endIndex {

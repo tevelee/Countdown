@@ -19,7 +19,7 @@ enum Node: Hashable {
     }
 
     func steps(groupBy grouping: Grouping = .precedence) -> [String] {
-        switch self {
+        switch reduced().ordered() {
         case let .operation(operation, lhs, rhs, value):
             let lStep = lhs.partialResult(operation: operation, groupBy: grouping)
             let rStep = rhs.partialResult(operation: operation, groupBy: grouping)
@@ -51,6 +51,17 @@ enum Node: Hashable {
         }
     }
 
+    func ordered() -> Node {
+        if case let .operation(operation, lhs, rhs, value) = self, operation.isCommutative {
+            if lhs.value >= rhs.value {
+                return .operation(operation: operation, lhs: lhs.ordered(), rhs: rhs.ordered(), value: value)
+            } else {
+                return .operation(operation: operation, lhs: rhs.ordered(), rhs: lhs.ordered(), value: value)
+            }
+        }
+        return self
+    }
+
     private func _reduced() -> Node {
         if case let .operation(operation, lhs, rhs, value) = self {
             if case let .operation(childOperation, childLhs, childRhs, _) = rhs,
@@ -58,10 +69,13 @@ enum Node: Hashable {
                case .operationWhenAppliedTwice(let switchedOperation) = operation.commutativity {
                 let childLhs = childLhs.reduced()
                 let childRhs = childRhs.reduced()
-                if operation == childOperation { // 5 - (1 - 2)  -->   5 + (2 - 1)
-                    if let childValue = try? operation.perform(childRhs.value, childLhs.value) {
+                if operation == childOperation {
+                    if let childValue = try? operation.perform(childRhs.value, childLhs.value) { // 5 - (1 - 2)  -->  5 + (2 - 1)
                         let newRhs: Node = .operation(operation: operation, lhs: childRhs, rhs: childLhs, value: childValue)
                         return .operation(operation: switchedOperation, lhs: lhs, rhs: newRhs, value: value)
+                    } else if let childValue = try? operation.perform(lhs.value, childLhs.value) { // 5 - (1 - 2)  -->  (5 - 1) + 2
+                        let newLhs: Node = .operation(operation: operation, lhs: lhs, rhs: childLhs, value: childValue)
+                        return .operation(operation: switchedOperation, lhs: newLhs, rhs: childRhs, value: value)
                     }
                 } else if childOperation.isCommutative {
                     if let childValue = try? operation.perform(lhs.value, childLhs.value) { // 5 - (1 + 2)  -->  (5 - 1) - 2

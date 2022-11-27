@@ -28,3 +28,26 @@ extension Node {
         return .operation(operation: operation, lhs: lhs, rhs: rhs, value: value)
     }
 }
+
+prefix operator >
+extension Int {
+    static prefix func >(number: Int) -> Node {
+        .number(number)
+    }
+}
+
+func +(lhs: Node, rhs: Node) throws -> Node {
+    try .add(lhs, rhs)
+}
+
+func -(lhs: Node, rhs: Node) throws -> Node {
+    try .subtract(lhs, rhs)
+}
+
+func *(lhs: Node, rhs: Node) throws -> Node {
+    try .multiply(lhs, rhs)
+}
+
+func /(lhs: Node, rhs: Node) throws -> Node {
+    try .divide(lhs, rhs)
+}
