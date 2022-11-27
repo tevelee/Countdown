@@ -34,26 +34,7 @@ struct NumbersGeneratorCommand: AsyncParsableCommand {
         let target = Int.random(in: 100 ... 1000)
         print("And the target is \(target)")
         if solve {
-            let solver = try NumberSolver(target: target, numbers: numbers)
-            var shortestSolution: Node?
-            do {
-                for try await (_, solution) in solver.solutions() {
-                    await Task.yield()
-                    if shortestSolution.map(solution.isLessComplex) ?? true {
-                        shortestSolution = solution
-                    }
-                }
-            } catch {}
-            if let solution = shortestSolution {
-                print()
-                print("The easiest solution was \(solution.description)")
-                print()
-                print(solution.tree())
-                print()
-                print(solution.steps().joined(separator: "\n"))
-            } else {
-                print("No solutions found")
-            }
+            try await NumberSolverPrinter(target: target, numbers: numbers).printSolution()
         } else {
             print("")
             print("Solve this by running:")

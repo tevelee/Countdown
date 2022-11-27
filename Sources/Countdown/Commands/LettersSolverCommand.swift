@@ -36,15 +36,26 @@ struct LettersSolverCommand: AsyncParsableCommand {
     }
 
     mutating func run() async throws {
-        let solver = try await LetterSolver(letters: letters, dictionary: url, min: min, max: max)
+        try await LettersSolverPrinter(solver: LetterSolver(letters: letters, dictionary: url, min: min, max: max),
+                                       definitionFinder: WordDefinitionFinder(),
+                                       filterWordsWithDefinitions: filterWordsWithDefinitions).printSolution()
+
+    }
+
+}
+
+struct LettersSolverPrinter {
+    let solver: LetterSolver
+    let definitionFinder: WordDefinitionFinder
+    let filterWordsWithDefinitions: Bool
+
+    func printSolution() async throws {
         var solutions: [Int: [String]] = [:]
         for try await result in solver.findWords() {
             solutions[result.count, default: []].append(result)
         }
         print()
         print("The best solutions are:")
-
-        let definitionFinder = WordDefinitionFinder()
 
         var displayedSections = 0
         var displayedWords = 0
@@ -75,5 +86,4 @@ struct LettersSolverCommand: AsyncParsableCommand {
             displayedWords += results.count
         }
     }
-
 }

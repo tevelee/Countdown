@@ -19,12 +19,36 @@ struct NumbersSolverCommand: AsyncParsableCommand {
     var operators: [String] = ["+", "-", "*", "/"]
 
     mutating func run() async throws {
+        try await NumberSolverPrinter(target: target,
+                                      numbers: numbers,
+                                      operations: operators.map(Self.operation(from:)),
+                                      broadenTarget: broadenTarget).printSolution()
+    }
+
+    private static func operation(from sign: String) throws -> Operation {
+        switch sign {
+        case "+": return .addition
+        case "-": return .subtraction
+        case "*": return .multiplication
+        case "/": return .division
+        default: throw "Unsupported operator \(sign)"
+        }
+    }
+}
+
+struct NumberSolverPrinter {
+    let target: Int
+    let numbers: [Int]
+    var operations: [Operation] = [.addition, .subtraction, .multiplication, .division]
+    var broadenTarget: Bool = false
+
+    func printSolution() async throws {
         try await solve(target: target, tryToBroadenTarget: broadenTarget)
     }
 
     @discardableResult
     private func solve(target: Int, tryToBroadenTarget: Bool) async throws -> Bool {
-        let solver = try NumberSolver(target: target, numbers: numbers, operations: operators.map(Self.operation(from:)))
+        let solver = try NumberSolver(target: target, numbers: numbers, operations: operations)
 
         var shortestSolution: Node?
         print("Finding solutions...")
@@ -67,14 +91,5 @@ struct NumbersSolverCommand: AsyncParsableCommand {
         }
         throw "Cannot be solved"
     }
-
-    private static func operation(from sign: String) throws -> Operation {
-        switch sign {
-        case "+": return .addition
-        case "-": return .subtraction
-        case "*": return .multiplication
-        case "/": return .division
-        default: throw "Unsupported operator \(sign)"
-        }
-    }
 }
+

@@ -54,44 +54,9 @@ struct LettersGeneratorCommand: AsyncParsableCommand {
         print(result)
 
         if solve {
-            let solver = try await LetterSolver(letters: result, dictionary: url)
-            var solutions: [Int: [String]] = [:]
-            for try await result in solver.findWords() {
-                solutions[result.count, default: []].append(result)
-            }
-            print()
-            print("The best solutions are:")
-
-            let definitionFinder = WordDefinitionFinder()
-
-            var displayedSections = 0
-            var displayedWords = 0
-            for length in solutions.keys.sorted().reversed() {
-                defer {
-                    displayedSections += 1
-                }
-                if displayedWords >= 3 && displayedSections >= 2 {
-                    break
-                }
-
-                var numberOfSolutions = 0
-                let results = solutions[length] ?? []
-                for solution in results {
-                    let definition = definitionFinder.define(solution)
-                    if filterWordsWithDefinitions, definition == nil {
-                        continue
-                    }
-
-                    if numberOfSolutions == 0 {
-                        print("\(length) letter words")
-                    }
-                    numberOfSolutions += 1
-
-                    let formattedDefinition = definition.map { ": \($0)" } ?? ""
-                    print("- \(solution)\(formattedDefinition)")
-                }
-                displayedWords += results.count
-            }
+            try await LettersSolverPrinter(solver: LetterSolver(letters: result, dictionary: url),
+                                           definitionFinder: WordDefinitionFinder(),
+                                           filterWordsWithDefinitions: filterWordsWithDefinitions).printSolution()
         } else {
             print("")
             print("Solve this by running:")

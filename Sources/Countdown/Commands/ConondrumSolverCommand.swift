@@ -27,8 +27,16 @@ struct ConondrumSolverCommand: AsyncParsableCommand {
     }
 
     mutating func run() async throws {
-        let solver = try await ConondrumSolver(target: letters, dictionary: url)
-        let definitionFinder = WordDefinitionFinder()
+        try await ConondrumSolverPrinter(solver: ConondrumSolver(target: letters, dictionary: url),
+                                         definitionFinder: WordDefinitionFinder()).printSolution()
+    }
+}
+
+struct ConondrumSolverPrinter {
+    let solver: ConondrumSolver
+    let definitionFinder: WordDefinitionFinder
+
+    func printSolution() async throws {
         for try await result in solver.findAnagrams() {
             let definition = (definitionFinder.define(result)).map { ": \($0)" } ?? ""
             print("\(result)\(definition)")

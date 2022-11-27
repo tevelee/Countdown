@@ -2,9 +2,9 @@ import Foundation
 import SwiftSoup
 
 final class WordDefinitionFinder {
-    func define(_ input: String) -> String? {
-        guard let dict = DCSDictionary.getDictionary(by: "Oxford Dictionary of English"),
-              let entry = dict.lookUp(text: input)?.first,
+    func define(_ input: String, in dictionaryName: String = "Oxford Dictionary of English") -> String? {
+        guard let dictionary = DCSDictionary.getDictionary(by: dictionaryName),
+              let entry = dictionary.lookUp(text: input)?.first,
               let html = try? SwiftSoup.parse(entry.html) else {
             return nil
         }
