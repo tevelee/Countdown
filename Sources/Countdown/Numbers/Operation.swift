@@ -49,7 +49,7 @@ extension Operation {
         return lhs - rhs
     }
     static let multiplication: Self = .init(sign: "*", precedence: 1, commutativity: .commutative, perform: *)
-    static let division: Self = .init(sign: ":", precedence: 1, commutativity: .operationWhenAppliedTwice(multiplication)) { lhs, rhs in
+    static let division: Self = .init(sign: "/", precedence: 1, commutativity: .operationWhenAppliedTwice(multiplication)) { lhs, rhs in
         guard rhs != 0 else { throw "Cannot divide by zero" }
         guard lhs.isMultiple(of: rhs) else { throw "Result must be integer" }
         return Int(lhs / rhs)

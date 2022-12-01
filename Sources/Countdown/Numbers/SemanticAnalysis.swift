@@ -1,4 +1,5 @@
 extension Node {
+    @inlinable
     func isSemanticallyEqual(to other: Node) -> Bool {
         if self == other {
             return true
@@ -28,6 +29,7 @@ extension Node {
         return false
     }
 
+    @inlinable
     func stepValues(groupBy grouping: Grouping) -> [Int] {
         switch self {
         case let .operation(operation, lhs, rhs, value):

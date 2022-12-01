@@ -19,7 +19,7 @@ enum Node: Hashable {
     }
 
     func steps(groupBy grouping: Grouping = .precedence) -> [String] {
-        switch reduced().ordered() {
+        switch reduced() {
         case let .operation(operation, lhs, rhs, value):
             let lStep = lhs.partialResult(operation: operation, groupBy: grouping)
             let rStep = rhs.partialResult(operation: operation, groupBy: grouping)
@@ -51,17 +51,6 @@ enum Node: Hashable {
         }
     }
 
-    func ordered() -> Node {
-        if case let .operation(operation, lhs, rhs, value) = self, operation.isCommutative {
-            if lhs.value >= rhs.value {
-                return .operation(operation: operation, lhs: lhs.ordered(), rhs: rhs.ordered(), value: value)
-            } else {
-                return .operation(operation: operation, lhs: rhs.ordered(), rhs: lhs.ordered(), value: value)
-            }
-        }
-        return self
-    }
-
     private func _reduced() -> Node {
         if case let .operation(operation, lhs, rhs, value) = self {
             if case let .operation(childOperation, childLhs, childRhs, _) = rhs,
@@ -84,7 +73,6 @@ enum Node: Hashable {
                     } else if let childValue = try? operation.perform(lhs.value, childRhs.value) { // 5 - (1 + 2)  -->  (5 - 2) - 1
                         let newLhs: Node = .operation(operation: operation, lhs: lhs, rhs: childRhs, value: childValue)
                         return .operation(operation: operation, lhs: newLhs, rhs: childLhs, value: value)
-
                     }
                 }
             } else {

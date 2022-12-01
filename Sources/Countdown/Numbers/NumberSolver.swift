@@ -30,7 +30,7 @@ final class NumberSolver {
                 var reason = "Found a new solution"
                 for existing in solutions where solution.isSemanticallyEqual(to: existing) {
                     if solution.isLessComplex(than: existing) {
-                        reason = "Found a less complex solution instead of [\(solution.steps().joined(separator: ", "))]"
+                        reason = "Found a less complex solution instead of [\(existing.steps().joined(separator: ", "))]"
                         solutions.remove(existing)
                         break
                     } else {
@@ -53,7 +53,7 @@ final class NumberSolver {
             return
         }
         if let node = availableNodes.first(where: { $0.value == target }) {
-            await result(node.reduced().ordered())
+            await result(node.reduced())
             // return // TODO: do we need to early return or let's wait for a less complex solution in the same tree?
         }
         for index1 in availableNodes.startIndex ..< availableNodes.endIndex {

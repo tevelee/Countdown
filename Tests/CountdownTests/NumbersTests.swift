@@ -20,8 +20,8 @@ final class NumbersTests: XCTestCase {
     func testSteps() async throws {
         let node: Node = try >4 * 5 - (10 - (1 + 2 + 3))
         XCTAssertEqual(node.steps().joined(separator: "\n"), """
-            5 * 4 = 20
-            20 - 10 + 2 + 1 + 3 = 16
+            4 * 5 = 20
+            20 - 10 + 1 + 2 + 3 = 16
             """)
         XCTAssertEqual(node.description, "4 * 5 - (10 - (1 + 2 + 3))")
 

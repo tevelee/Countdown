@@ -29,8 +29,8 @@ struct NumbersSolverCommand: AsyncParsableCommand {
         switch sign {
         case "+": return .addition
         case "-": return .subtraction
-        case "*": return .multiplication
-        case "/": return .division
+        case "*", "x": return .multiplication
+        case "/", ":": return .division
         default: throw "Unsupported operator \(sign)"
         }
     }

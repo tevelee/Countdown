@@ -39,8 +39,8 @@ extension Node {
             if operation == .division {
                 operationScore = rhs.value == 2 ? 2 : rhs.value == 3 ? 4 : 10
             }
-            let valueScore = value.isMultiple(of: 10) ? 0 : value.isMultiple(of: 2) ? 2 : value.isMultiple(of: 5) ? 8 : 10
-            let depthScore = depth
+            let valueScore = value.isMultiple(of: 10) ? 1 : value.isMultiple(of: 2) ? 2 : value.isMultiple(of: 5) ? 7 : 10
+            let depthScore = depth * -2
             return operationScore + valueScore + depthScore
                 + lhs.complexity(scores: scores, depth: depth + 1)
                 + rhs.complexity(scores: scores, depth: depth + 1)
